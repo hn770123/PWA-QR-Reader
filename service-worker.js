@@ -90,7 +90,8 @@ self.addEventListener('fetch', event => {
         // キャッシュにない場合はネットワークから取得
         return fetch(event.request).then(response => {
           // 有効なレスポンスかチェック
-          if (!response || response.status !== 200 || response.type !== 'basic') {
+          // basic: 同一オリジン、cors: CORS許可されたクロスオリジン
+          if (!response || response.status !== 200 || (response.type !== 'basic' && response.type !== 'cors')) {
             return response;
           }
 

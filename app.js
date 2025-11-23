@@ -180,8 +180,9 @@ class QRCodeReader {
                 );
 
                 // jsQRでQRコードを検出
+                // attemptBoth: 様々な照明条件でのQRコード検出を改善
                 const code = jsQR(imageData.data, imageData.width, imageData.height, {
-                    inversionAttempts: "dontInvert",
+                    inversionAttempts: "attemptBoth",
                 });
 
                 if (code) {
@@ -240,14 +241,22 @@ class QRCodeReader {
     }
 
     /**
-     * URLかどうかを判定
+     * URLかどうかを判定し、安全性をチェック
      * @param {string} string - チェックする文字列
      * @returns {boolean} URLの場合true
      */
     isValidUrl(string) {
         try {
             const url = new URL(string);
-            return url.protocol === 'http:' || url.protocol === 'https:';
+            // http/https プロトコルのみ許可（javascript:、data:などを防ぐ）
+            if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+                return false;
+            }
+            // ホスト名が存在することを確認
+            if (!url.hostname) {
+                return false;
+            }
+            return true;
         } catch (_) {
             return false;
         }
