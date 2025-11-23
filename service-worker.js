@@ -67,7 +67,7 @@ self.addEventListener('activate', event => {
  */
 self.addEventListener('fetch', event => {
   // jsQR CDNのリクエストは常にネットワークから取得
-  if (event.request.url.includes('jsdelivr.net')) {
+  if (event.request.url.startsWith('https://cdn.jsdelivr.net/')) {
     event.respondWith(
       fetch(event.request).catch(() => {
         return new Response('オフラインです。jsQRライブラリを読み込めません。', {

@@ -28,6 +28,8 @@ class QRCodeReader {
         this.cameraActive = false; // カメラが有効かどうか
         this.facingMode = 'environment'; // カメラの向き: 'environment'(背面) or 'user'(前面)
         this.lastResult = ''; // 最後に読み取った結果
+        this.statusTimeout = null; // ステータス表示のタイムアウトID
+        this.frameCount = 0; // フレームカウンター（パフォーマンス最適化用）
 
         // イベントリスナーの設定
         this.setupEventListeners();
@@ -156,31 +158,35 @@ class QRCodeReader {
             return;
         }
 
-        // ビデオからキャンバスに描画
-        if (this.video.readyState === this.video.HAVE_ENOUGH_DATA) {
-            this.canvasContext.drawImage(
-                this.video,
-                0,
-                0,
-                this.canvas.width,
-                this.canvas.height
-            );
+        // パフォーマンス最適化: 3フレームに1回スキャン
+        this.frameCount++;
+        if (this.frameCount % 3 === 0) {
+            // ビデオからキャンバスに描画
+            if (this.video.readyState === this.video.HAVE_ENOUGH_DATA) {
+                this.canvasContext.drawImage(
+                    this.video,
+                    0,
+                    0,
+                    this.canvas.width,
+                    this.canvas.height
+                );
 
-            // 画像データを取得
-            const imageData = this.canvasContext.getImageData(
-                0,
-                0,
-                this.canvas.width,
-                this.canvas.height
-            );
+                // 画像データを取得
+                const imageData = this.canvasContext.getImageData(
+                    0,
+                    0,
+                    this.canvas.width,
+                    this.canvas.height
+                );
 
-            // jsQRでQRコードを検出
-            const code = jsQR(imageData.data, imageData.width, imageData.height, {
-                inversionAttempts: "dontInvert",
-            });
+                // jsQRでQRコードを検出
+                const code = jsQR(imageData.data, imageData.width, imageData.height, {
+                    inversionAttempts: "dontInvert",
+                });
 
-            if (code) {
-                this.handleQRCode(code.data);
+                if (code) {
+                    this.handleQRCode(code.data);
+                }
             }
         }
 
@@ -298,12 +304,18 @@ class QRCodeReader {
      * @param {string} type - メッセージタイプ ('success' or 'error')
      */
     showStatus(message, type = '') {
+        // 既存のタイムアウトをクリア
+        if (this.statusTimeout) {
+            clearTimeout(this.statusTimeout);
+        }
+
         this.statusDiv.textContent = message;
         this.statusDiv.className = 'status show ' + type;
 
         // 3秒後に非表示
-        setTimeout(() => {
+        this.statusTimeout = setTimeout(() => {
             this.statusDiv.classList.remove('show');
+            this.statusTimeout = null;
         }, 3000);
     }
 }
