@@ -1,0 +1,31 @@
+# 依存関係
+node_modules/
+package-lock.json
+
+# ビルド出力
+dist/
+build/
+
+# 環境変数
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# ログ
+*.log
+npm-debug.log*
+
+# テンポラリファイル
+tmp/
+temp/
+*.tmp

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#2196F3">
+    <meta name="description" content="PWA QRコードリーダー - カメラを使ってQRコードを読み取ります">
+    <title>QRコードリーダー</title>
+    
+    <!-- PWA manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- アイコン -->
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    
+    <!-- スタイルシート -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- ヘッダー -->
+        <header>
+            <h1>📷 QRコードリーダー</h1>
+        </header>
+
+        <!-- カメラ表示エリア（上半分） -->
+        <div class="camera-section">
+            <video id="video" autoplay playsinline></video>
+            <canvas id="canvas" style="display: none;"></canvas>
+            <div id="camera-overlay" class="camera-overlay">
+                <div class="scan-frame"></div>
+            </div>
+        </div>
+
+        <!-- コントロールボタン -->
+        <div class="controls">
+            <button id="toggleCamera" class="btn btn-primary" title="カメラのオン/オフ">
+                <span id="cameraIcon">📹</span>
+                <span id="cameraText">カメラオフ</span>
+            </button>
+            <button id="switchCamera" class="btn btn-secondary" title="カメラ切り替え">
+                <span>🔄</span>
+                <span>カメラ切替</span>
+            </button>
+        </div>
+
+        <!-- 読み取り結果表示エリア（下半分） -->
+        <div class="result-section">
+            <h2>読み取り結果</h2>
+            <div id="result" class="result-content">
+                <p class="placeholder">QRコードをカメラにかざしてください</p>
+            </div>
+            <button id="copyBtn" class="btn btn-copy" style="display: none;">
+                📋 コピー
+            </button>
+        </div>
+
+        <!-- ステータス表示 -->
+        <div id="status" class="status"></div>
+    </div>
+
+    <!-- jsQR ライブラリ -->
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    
+    <!-- アプリケーションスクリプト -->
+    <script src="app.js"></script>
+</body>
+</html>
